@@ -48,6 +48,37 @@ code or keybase error code) returned by the last keyserver that was tried. If
 any results were found, `errorCode` is null. If no results are found, `results`
 is null and `errorCode` is not null.
 
+####Results format
+
+```javascript
+results = [
+    {
+        "keyid": "F75BE4E6EF6E9DD203679E94E7F6FAD172EFEE3D", //String, the key id of the public key (this is usually the fingerprint)
+        "href": "https://keybase.io/diafygi/key.asc", //String, direct link to the public key
+        "info": "https://keybase.io/diafygi", //String, link to more information about the public key
+        "algo": 1, //Integer or null, asymmetric encryption algorithm according to https://tools.ietf.org/html/rfc4880#section-9.1
+        "keylen": 4096, //Integer or null, the length of the key
+        "creationdate": 1386092941, //Integer or null, unix timestamp when the key was created
+        "expirationdate": null, //Integer or null, unix timestamp when the key will expire
+        "revoked": false, //Boolean, whether the key is revoked
+        "disabled": false, //Boolean, whether the key is disabled
+        "expired": false, //Boolean, whether the key is expired
+        "uids": [
+            {
+                "uid": "Daniel Roesler <daniel@roesler.cc>", //String, information about the user
+                "creationdate": 1413680553, //Integer or null, unix timestamp when the uid was added
+                "expirationdate": null, //Integer or null, unix timestamp when the uid was added
+                "revoked": false, //Boolean, whether the uid is revoked
+                "disabled": false, //Boolean, whether the uid is disabled
+                "expired": false, //Boolean, whether the uid is expired
+            },
+            ... //more user ids are listed if available
+        ]
+    },
+    ... //more result objects are listed if available
+]
+```
+
 ####Examples
 
 ```javascript
