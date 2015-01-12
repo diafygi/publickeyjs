@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <script src="publickey.js"></script>
+        <style>
+            /*http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License: none (public domain)*/
+            html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small,
+            strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+            details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {margin:0; padding:0; border:0; font-size:100%; font:inherit; vertical-align:baseline;}
+            /* HTML5 display-role reset for older browsers */
+            article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {display:block;} body {line-height: 1;} ol, ul {list-style: none;}
+            blockquote, q {quotes: none;} blockquote:before, blockquote:after, q:before, q:after {content:''; content:none;} table {border-collapse:collapse; border-spacing:0;}
+        </style>
+        <style>
+            body{
+                color:#1B4241;
+                font-family: 'Lato', sans-serif;
+                font-size: 18px;
+                background-color: #D1F7E0;
+                text-align: center;
+            }
+            h1{
+                font-size: 35px;
+                font-weight: bold;
+                margin: 24px 0px;
+            }
+            #content{
+                display: inline-block;
+                background-color: #E6E6E6;
+                max-width: 900px;
+                width: 100%;
+                margin: 40px 0px;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 10px 10px 5px #888888;
+                box-sizing: border-box;
+            }
+            #desc{
+                display: inline-block;
+                text-align: left;
+                margin: 0px 40px;
+                max-width: 600px;
+                line-height:1.3em;
+            }
+            form{
+                display: block;
+                padding-top: 30px;
+            }
+            #q{
+                font-family: 'Lato', sans-serif;
+                border-width: 1px 0px 1px 1px;
+                border-style: solid;
+                border-color: #B7B5B5;
+                border-radius: 10px 0px 0px 10px;
+                display:inline-block;
+                max-width:350px;
+                width: 100%;
+                margin: 0px;
+                font-size: 20px;
+                padding: 0px 10px;
+                vertical-align: middle;
+                color: #1B4241;
+                height: 40px;
+                box-sizing: border-box;
+            }
+            #go{
+                font-family: 'Lato', sans-serif;
+                display:inline-block;
+                border: 1px solid #9B9B9B;
+                border-radius: 0px 10px 10px 0px;
+                width: 130px;
+                margin: 0px;
+                font-size: 20px;
+                padding: 0 5px;
+                height: 40px;
+                vertical-align: middle;
+                box-sizing: border-box;
+                background-color: #9B9B9B;
+                color: #FFF;
+            }
+            #results{
+                display: inline-block;
+                max-width: 800px;
+                width: 100%;
+                padding: 0px;
+            }
+            li.result{
+                list-style: outside none none;
+                width: 100%;
+                display: block;
+                background-color: #D7D7D7;
+                border-radius: 10px;
+                max-width: 800px;
+                margin: 0px;
+                padding: 15px;
+                box-sizing: border-box;
+                margin-top:20px;
+                text-align: left;
+            }
+            li.error{
+                text-align: center;
+                background-color: #FFABAB;
+            }
+            div.keyid{
+                display: inline-block;
+                width: 100%;
+                max-width: 100px;
+                vertical-align: middle;
+                margin:10px 20px 10px 10px;
+            }
+            div.keyid a:nth-child(2){
+                display:inline-block;
+                margin-top:5px;
+                font-size:12px;
+            }
+            div.uids{
+                display: inline-block;
+                vertical-align: middle;
+            }
+            div.uids h4{
+                font-weight: bold;
+                margin: 0px;
+            }
+            div.uids ul{
+                font-size: 16px;
+                padding-left: 20px;
+            }
+            div.uids li{
+                margin-top:3px;
+                list-style: circle;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            <h1>Search for PGP Public Keys</h1>
+            <p id="desc">
+                This is a demo for
+                <a href="https://github.com/diafygi/publickeyjs" target="_blank">PublicKey.js</a>,
+                a javascript library that makes it easy to search for public
+                keys. This library can search both public <a href="https://sks-keyservers.net/" target="_blank">SKS keyservers</a>
+                and <a href="https://keybase.io/" target="_blank">Keybase</a>.
+                Try it out below by searching for "diafygi" (that's me!).
+                If you need to submit a new public key, please use the normal
+                SKS <a href="https://keys.fedoraproject.org/" target="_blank">interface</a>.
+
+            </p>
+            <form>
+                <input id="q" name="q" placeholder="Type search here..."><input id="go" type="submit" value="Search"/>
+            </form>
+            <ul id="results"></ul>
+        </div>
+        <script>
+            var PK = new PublicKey();
+
+            function blackHole(e){
+                if(e){
+                    e.preventDefault();
+                }
+            }
+
+            function searchForKeys(e){
+                //prevent searching while one is going on 
+                if(e){
+                    e.preventDefault();
+                }
+                document.getElementById("go").onclick = blackHole;
+                document.getElementById("go").value = "Searching...";
+
+                //perform the search
+                var q = document.getElementById("q").value;
+                PK.search(q, function(results, err){
+
+                    //error handling
+                    if(err !== null){
+                        if(err === 404){
+                            var err_msg = "No public keys found :(";
+                        }
+                        else{
+                            var err_msg = "Something went wrong (Error Code " + err + ")";
+                        }
+                        document.getElementById("results").innerHTML = "<li class='error result'></li>";
+                        document.querySelector("#results li.error").appendChild(document.createTextNode(err_msg));
+                    }
+
+                    //normal results
+                    else{
+                        var ul = document.getElementById("results");
+                        ul.innerHTML = "";
+                        for(var i = 0; i < results.length; i++){
+                            var li = document.createElement("li");
+                            li.className = "result";
+
+                            //keyid column
+                            var keyid = document.createElement("div");
+                            keyid.className = "keyid";
+                            var keyid_a1 = document.createElement("a");
+                            keyid_a1.href = results[i]['href'];
+                            keyid_a1.title = results[i]['keyid'];
+                            keyid_a1.target = "_blank";
+                            keyid_a1.appendChild(document.createTextNode(results[i]['keyid'].substr(results[i]['keyid'].length-8)));
+                            keyid.appendChild(keyid_a1);
+                            var keyid_a2 = document.createElement("a");
+                            keyid_a2.href = results[i]['info'];
+                            keyid_a2.title = "Public key information";
+                            keyid_a2.target = "_blank";
+                            keyid_a2.appendChild(document.createTextNode("more info"));
+                            keyid.appendChild(keyid_a2);
+
+                            //uids list
+                            var uids_div = document.createElement("div"); uids_div.className = "uids";
+                            var uids_h4 = document.createElement("h4"); uids_h4.innerHTML = "Accounts associated with this key:";
+                            var uids_ul = document.createElement("ul");
+                            for(var u = 0; u < results[i]['uids'].length; u++){
+                                var uid_li = document.createElement("li");
+                                uid_li.appendChild(document.createTextNode(results[i]['uids'][u]['uid']));
+                                uids_ul.appendChild(uid_li);
+                            }
+                            uids_div.appendChild(uids_h4);
+                            uids_div.appendChild(uids_ul);
+
+                            //append to DOM
+                            li.appendChild(keyid);
+                            li.appendChild(uids_div);
+                            ul.appendChild(li);
+                        }
+                    }
+
+                    document.getElementById("go").value = "Search";
+                    document.getElementById("go").onclick = searchForKeys;
+                });
+            }
+
+            document.getElementById("go").onclick = searchForKeys;
+
+            //find url search term
+            if(document.location.search.indexOf("?q=") === 0){
+                document.getElementById("q").value = document.location.search.substr(3);
+                searchForKeys();
+            }
+        </script>
+    </body>
+</html>
